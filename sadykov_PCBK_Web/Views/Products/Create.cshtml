@@ -1,0 +1,56 @@
+@model sadykov_PCBK_Web.Models.Product
+@{ ViewData["Title"] = "Новая продукция"; }
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="bg-white border rounded overflow-hidden">
+      <div class="panel-header">
+        <i class="bi bi-plus-circle me-2"></i>Новая продукция ПЦБК
+      </div>
+      <div class="p-4">
+        <form asp-action="Create" method="post">
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-md-6">
+              <label asp-for="Article" class="form-label">Артикул *</label>
+              <input asp-for="Article" class="form-control" placeholder="напр. PCBK-001" />
+              <span asp-validation-for="Article" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+              <label asp-for="ProductType" class="form-label">Тип продукции *</label>
+              <input asp-for="ProductType" class="form-control"
+                     placeholder="Гофрокартон, Крафт-бумага..." />
+              <span asp-validation-for="ProductType" class="text-danger small"></span>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label asp-for="ProductName" class="form-label">Наименование *</label>
+            <input asp-for="ProductName" class="form-control" />
+            <span asp-validation-for="ProductName" class="text-danger small"></span>
+          </div>
+
+          <div class="mb-3" style="max-width:220px">
+            <label asp-for="MinPrice" class="form-label">Мин. цена (руб.) *</label>
+            <input asp-for="MinPrice" type="number" step="0.01" min="0" class="form-control" />
+            <span asp-validation-for="MinPrice" class="text-danger small"></span>
+          </div>
+
+          <div class="d-flex gap-2 pt-3 border-top">
+            <button type="submit" class="btn btn-pcbk">
+              <i class="bi bi-save me-1"></i>Сохранить
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+}

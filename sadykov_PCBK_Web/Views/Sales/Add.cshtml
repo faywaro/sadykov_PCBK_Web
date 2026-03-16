@@ -1,0 +1,88 @@
+@model sadykov_PCBK_Web.ViewModels.SaleAddViewModel
+@{ ViewData["Title"] = "Добавление реализации продукции"; }
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="bg-white border rounded overflow-hidden">
+      <div class="panel-header">
+        <i class="bi bi-truck me-2"></i>Новая запись о реализации продукции ПЦБК
+      </div>
+      <div class="p-4">
+        <form asp-action="Add" method="post">
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+          <div class="mb-3">
+            <label class="form-label">Партнёр *</label>
+            <select name="PartnerId" class="form-select" required>
+              <option value="">— Выберите партнёра —</option>
+              @foreach (var p in Model.Partners)
+              {
+                if (Model.PartnerId == p.Id)
+                {
+                  <option value="@p.Id" selected>@p.CompanyName</option>
+                }
+                else
+                {
+                  <option value="@p.Id">@p.CompanyName</option>
+                }
+              }
+            </select>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Фильтр по артикулу</label>
+            <input type="text" id="articleFilter" class="form-control"
+                   placeholder="Введите артикул для фильтрации..." />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Продукция *</label>
+            <select name="ProductId" id="productSelect" class="form-select" required>
+              <option value="">— Выберите продукцию —</option>
+              @foreach (var p in Model.Products)
+              {
+                <option value="@p.Id" data-article="@p.Article">
+                  @p.Article — @p.ProductName
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Количество *</label>
+              <input name="Quantity" type="number" min="1" class="form-control"
+                     placeholder="Количество единиц" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Дата реализации *</label>
+              <input name="SaleDate" type="date" class="form-control"
+                     value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 pt-3 border-top">
+            <button type="submit" class="btn btn-pcbk">
+              <i class="bi bi-save me-1"></i>Сохранить
+            </button>
+            <a asp-controller="Partners" asp-action="Index"
+               class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    document.getElementById('articleFilter').addEventListener('input', function() {
+      const val = this.value.toLowerCase();
+      const sel = document.getElementById('productSelect');
+      Array.from(sel.options).forEach(opt => {
+        if (!opt.value) return;
+        opt.style.display = (opt.dataset.article || '').toLowerCase().includes(val) ? '' : 'none';
+      });
+    });
+  </script>
+}

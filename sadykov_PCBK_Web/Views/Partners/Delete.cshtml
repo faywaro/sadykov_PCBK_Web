@@ -1,0 +1,36 @@
+@model sadykov_PCBK_Web.ViewModels.PartnerViewModel
+@{ ViewData["Title"] = "Удалить партнёра"; }
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="bg-white border border-danger rounded overflow-hidden">
+      <div class="panel-header bg-danger text-white">
+        <i class="bi bi-exclamation-triangle me-2"></i>Подтверждение удаления
+      </div>
+      <div class="p-4">
+        <p class="fs-6">Вы уверены, что хотите удалить партнёра?</p>
+        <table class="table table-borderless table-sm mb-3">
+          <tr><td class="text-muted" style="width:140px">Наименование</td>
+              <td><strong>@Model.CompanyName</strong></td></tr>
+          <tr><td class="text-muted">Тип</td><td>@Model.TypeName</td></tr>
+          <tr><td class="text-muted">Директор</td><td>@Model.DirectorName</td></tr>
+          <tr><td class="text-muted">Рейтинг</td><td>@Model.Rating</td></tr>
+        </table>
+        <div class="alert alert-warning py-2">
+          <i class="bi bi-exclamation-circle me-2"></i>
+          Действие необратимо. Все записи истории реализации этого партнёра будут удалены.
+        </div>
+        <form asp-action="Delete" method="post">
+          <input type="hidden" name="id" value="@Model.Id" />
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-trash me-1"></i>Удалить
+            </button>
+            <a asp-action="Details" asp-route-id="@Model.Id"
+               class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

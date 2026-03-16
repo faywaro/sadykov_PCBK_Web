@@ -1,0 +1,66 @@
+@model IEnumerable<sadykov_PCBK_Web.Models.Product>
+@{ ViewData["Title"] = "Продукция ПЦБК"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0"><i class="bi bi-box me-2"></i>Продукция АО «ПЦБК»</h5>
+  <a asp-action="Create" class="btn btn-pcbk btn-sm">
+    <i class="bi bi-plus-circle me-1"></i>Добавить продукцию
+  </a>
+</div>
+
+<div class="bg-white border rounded overflow-hidden">
+  <div class="panel-header d-flex justify-content-between align-items-center">
+    <span>Список продукции</span>
+    <form method="get" asp-action="Index" class="d-flex gap-2">
+      <input type="text" name="search" class="form-control form-control-sm search-box"
+             placeholder="Поиск по артикулу, наименованию, типу..."
+             value="@ViewBag.Search" />
+      <button class="btn btn-pcbk-outline btn-sm" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+  </div>
+
+  @if (!Model.Any())
+  {
+    <div class="p-4 text-muted">Продукция не найдена.</div>
+  }
+  else
+  {
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Артикул</th>
+          <th>Наименование</th>
+          <th>Тип продукции</th>
+          <th class="text-end">Мин. цена (руб.)</th>
+          <th class="text-center" style="width:110px">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var p in Model)
+        {
+          <tr>
+            <td><code>@p.Article</code></td>
+            <td>@p.ProductName</td>
+            <td><span class="badge bg-secondary">@p.ProductType</span></td>
+            <td class="text-end">@p.MinPrice.ToString("N2")</td>
+            <td class="text-center">
+              <a asp-action="Edit" asp-route-id="@p.Id"
+                 class="btn btn-sm btn-outline-secondary py-0" title="Редактировать">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a asp-action="Delete" asp-route-id="@p.Id"
+                 class="btn btn-sm btn-outline-danger py-0" title="Удалить">
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <div class="px-3 py-2 text-muted small border-top">
+      Всего позиций: @Model.Count()
+    </div>
+  }
+</div>

@@ -1,0 +1,63 @@
+@model sadykov_PCBK_Web.ViewModels.PartnersIndexViewModel
+@{ ViewData["Title"] = "Партнёры ПЦБК"; }
+
+<div class="row g-0" style="margin: -1.5rem -1.5rem 0;">
+
+    <!-- ЛЕВАЯ ПАНЕЛЬ: список партнёров (как WPF ListBox) -->
+    <div class="col-3 left-panel p-0">
+        <div class="panel-header d-flex justify-content-between align-items-center">
+            <span>Список партнёров</span>
+            <a asp-action="Create" class="btn btn-pcbk btn-sm py-0 px-2" title="Добавить">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+        </div>
+
+        <!-- Поиск -->
+        <div class="p-2">
+            <form method="get" asp-action="Index">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control"
+                           placeholder="Поиск..." value="@Model.SearchTerm" />
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Карточки партнёров -->
+        <div class="px-2 pb-2">
+            @if (!Model.Partners.Any())
+            {
+                <div class="text-muted small p-3">Партнёры не найдены.</div>
+            }
+            @foreach (var p in Model.Partners)
+            {
+                <a href="@Url.Action("Details", "Partners", new { id = p.Id })"
+                   class="partner-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="card-title">@p.TypeName | @p.CompanyName</div>
+                            <div class="card-sub">@p.DirectorName</div>
+                            <div class="card-sub">@p.Phone</div>
+                            <div class="card-sub">Рейтинг: <strong>@p.Rating</strong></div>
+                        </div>
+                        <div class="discount-badge ms-2">@p.DiscountDisplay</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ: приглашение выбрать партнёра -->
+    <div class="col-9 right-panel p-0">
+        <div class="panel-header">
+            Выберите партнёра для просмотра истории реализации
+        </div>
+        <div class="d-flex flex-column align-items-center justify-content-center h-75 text-muted">
+            <i class="bi bi-arrow-left-circle" style="font-size:3rem;opacity:.3"></i>
+            <p class="mt-3">Нажмите на карточку партнёра в левой панели</p>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,154 @@
+@model sadykov_PCBK_Web.ViewModels.PartnerDetailsViewModel
+@{ ViewData["Title"] = Model.Partner.CompanyName; }
+
+<div class="row g-0" style="margin: -1.5rem -1.5rem 0;">
+
+    <!-- ЛЕВАЯ ПАНЕЛЬ: список всех партнёров -->
+    <div class="col-3 left-panel p-0">
+        <div class="panel-header d-flex justify-content-between align-items-center">
+            <span>Список партнёров</span>
+            <a asp-action="Create" class="btn btn-pcbk btn-sm py-0 px-2">
+                <i class="bi bi-plus-lg"></i>
+            </a>
+        </div>
+        <div class="p-2">
+            <form method="get" asp-action="Index">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="search" class="form-control" placeholder="Поиск..." />
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="px-2 pb-2">
+            @{
+                var all = ViewBag.AllPartners as List<sadykov_PCBK_Web.ViewModels.PartnerViewModel> ?? new();
+            }
+            @foreach (var p in all)
+            {
+                <a href="@Url.Action("Details", "Partners", new { id = p.Id })"
+                   class="partner-card @(p.Id == Model.Partner.Id ? "selected" : "")">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="card-title">@p.TypeName | @p.CompanyName</div>
+                            <div class="card-sub">@p.DirectorName</div>
+                            <div class="card-sub">@p.Phone</div>
+                            <div class="card-sub">Рейтинг: <strong>@p.Rating</strong></div>
+                        </div>
+                        <div class="discount-badge ms-2">@p.DiscountDisplay</div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ -->
+    <div class="col-9 right-panel p-0">
+
+        <!-- Заголовок + кнопки -->
+        <div class="panel-header d-flex justify-content-between align-items-center">
+            <span>
+                <i class="bi bi-building me-1"></i>
+                @Model.ViewModel.TypeName | @Model.Partner.CompanyName
+                &nbsp;<span class="discount-badge">@Model.ViewModel.DiscountDisplay</span>
+            </span>
+            <div class="d-flex gap-2">
+                <a asp-action="Add" asp-controller="Sales" asp-route-partnerId="@Model.Partner.Id"
+                   class="btn btn-pcbk btn-sm">
+                    <i class="bi bi-truck me-1"></i>Добавить реализацию
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Partner.Id"
+                   class="btn btn-pcbk-outline btn-sm">
+                    <i class="bi bi-pencil me-1"></i>Редактировать
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Partner.Id"
+                   class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash me-1"></i>Удалить
+                </a>
+            </div>
+        </div>
+
+        <div class="p-3">
+            <!-- Реквизиты партнёра -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="section-title">Реквизиты</div>
+                    <table class="table table-borderless table-sm mb-0">
+                        <tr><td class="text-muted" style="width:140px">ИНН</td><td><code>@Model.Partner.Inn</code></td></tr>
+                        <tr><td class="text-muted">Юр. адрес</td><td>@Model.Partner.LegalAddress</td></tr>
+                        <tr><td class="text-muted">Директор</td><td>@Model.Partner.DirectorName</td></tr>
+                        <tr><td class="text-muted">Телефон</td><td>@Model.Partner.Phone</td></tr>
+                        <tr><td class="text-muted">Email</td><td><a href="mailto:@Model.Partner.Email">@Model.Partner.Email</a></td></tr>
+                        <tr>
+                            <td class="text-muted">Рейтинг</td>
+                            <td>
+                                @{
+                                    var cls = Model.Partner.Rating >= 7 ? "rating-high" :
+                                              Model.Partner.Rating >= 4 ? "rating-medium" : "rating-low";
+                                }
+                                <span class="rating-badge @cls">@Model.Partner.Rating</span>
+                            </td>
+                        </tr>
+                        <tr><td class="text-muted">Объём реализации</td><td>@Model.ViewModel.TotalQuantity.ToString("N0") ед.</td></tr>
+                        <tr><td class="text-muted">Скидка</td><td><strong>@Model.ViewModel.DiscountDisplay</strong></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- История реализации -->
+            <div class="section-title">
+                История реализации продукции ПЦБК
+                <span class="text-muted fw-normal ms-2" style="font-size:12px">(@Model.Sales.Count записей)</span>
+            </div>
+
+            @if (!Model.Sales.Any())
+            {
+                <p class="text-muted">История реализации отсутствует.</p>
+            }
+            else
+            {
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Наименование продукции</th>
+                            <th>Тип</th>
+                            <th>Количество</th>
+                            <th>Дата реализации</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.Sales)
+                        {
+                            <tr>
+                                <td>@s.Product?.ProductName</td>
+                                <td><span class="badge bg-secondary">@s.Product?.ProductType</span></td>
+                                <td>@s.Quantity.ToString("N0")</td>
+                                <td>@s.SaleDate.ToString("dd.MM.yyyy")</td>
+                                <td class="text-end">
+                                    <form asp-controller="Sales" asp-action="Delete" method="post"
+                                          onsubmit="return confirm('Удалить запись о реализации?')">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@s.Id" />
+                                        <input type="hidden" name="partnerId" value="@Model.Partner.Id" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm py-0">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="2">Итого:</td>
+                            <td>@Model.Sales.Sum(s => s.Quantity).ToString("N0") ед.</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+        </div>
+    </div>
+</div>

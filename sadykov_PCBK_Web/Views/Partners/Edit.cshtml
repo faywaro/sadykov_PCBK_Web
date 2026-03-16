@@ -1,0 +1,130 @@
+@model sadykov_PCBK_Web.ViewModels.PartnerEditViewModel
+@{ ViewData["Title"] = "Редактировать: " + Model.Partner.CompanyName; }
+
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="bg-white border rounded p-0 overflow-hidden">
+
+      <div class="panel-header">
+        <i class="bi bi-pencil me-2"></i>@Model.Partner.CompanyName
+      </div>
+
+      <div class="p-4">
+        <form asp-action="Edit" method="post">
+          <input type="hidden" asp-for="Partner.Id" />
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+          <div class="section-title">Данные партнёра</div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-md-6">
+              <label asp-for="Partner.TypeId" class="form-label">Тип партнёра *</label>
+              <select asp-for="Partner.TypeId" class="form-select"
+                      asp-items="@(new SelectList(Model.Types, "Id", "TypeName", Model.Partner.TypeId))">
+              </select>
+              <span asp-validation-for="Partner.TypeId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+              <label asp-for="Partner.Inn" class="form-label">ИНН *</label>
+              <input asp-for="Partner.Inn" class="form-control" />
+              <span asp-validation-for="Partner.Inn" class="text-danger small"></span>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label asp-for="Partner.CompanyName" class="form-label">Наименование компании *</label>
+            <input asp-for="Partner.CompanyName" class="form-control" />
+            <span asp-validation-for="Partner.CompanyName" class="text-danger small"></span>
+          </div>
+
+          <div class="mb-2">
+            <label asp-for="Partner.LegalAddress" class="form-label">Юридический адрес *</label>
+            <input asp-for="Partner.LegalAddress" class="form-control" />
+            <span asp-validation-for="Partner.LegalAddress" class="text-danger small"></span>
+          </div>
+
+          <div class="mb-2">
+            <label asp-for="Partner.DirectorName" class="form-label">ФИО директора *</label>
+            <input asp-for="Partner.DirectorName" class="form-control" />
+            <span asp-validation-for="Partner.DirectorName" class="text-danger small"></span>
+          </div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-md-6">
+              <label asp-for="Partner.Phone" class="form-label">Телефон *</label>
+              <input asp-for="Partner.Phone" class="form-control" />
+              <span asp-validation-for="Partner.Phone" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6">
+              <label asp-for="Partner.Email" class="form-label">Email *</label>
+              <input asp-for="Partner.Email" class="form-control" />
+              <span asp-validation-for="Partner.Email" class="text-danger small"></span>
+            </div>
+          </div>
+
+          <div class="mb-3" style="max-width:180px">
+            <label asp-for="Partner.Rating" class="form-label">Рейтинг *</label>
+            <input asp-for="Partner.Rating" type="number" min="0" class="form-control" />
+            <span asp-validation-for="Partner.Rating" class="text-danger small"></span>
+          </div>
+
+          <!-- Добавить реализацию из формы редактирования -->
+          <div class="border-top pt-3 mt-2">
+            <div class="section-title">Добавить реализацию продукции (необязательно)</div>
+            <div class="mb-2">
+              <label class="form-label">Фильтр по артикулу</label>
+              <input type="text" id="articleFilter" class="form-control" placeholder="Введите артикул..." />
+            </div>
+            <div class="mb-2">
+              <label asp-for="SaleProductId" class="form-label">Продукция</label>
+              <select asp-for="SaleProductId" id="productSelect" class="form-select">
+                <option value="">— Не выбрано —</option>
+                @foreach (var prod in Model.Products)
+                {
+                  <option value="@prod.Id" data-article="@prod.Article">
+                    @prod.Article — @prod.ProductName
+                  </option>
+                }
+              </select>
+            </div>
+            <div class="row g-3 mb-2">
+              <div class="col-md-6">
+                <label asp-for="SaleQuantity" class="form-label">Количество</label>
+                <input asp-for="SaleQuantity" type="number" min="1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label asp-for="SaleDate" class="form-label">Дата реализации</label>
+                <input asp-for="SaleDate" type="date" class="form-control"
+                       value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-3 pt-3 border-top">
+            <button type="submit" class="btn btn-pcbk">
+              <i class="bi bi-save me-1"></i>Сохранить
+            </button>
+            <a asp-action="Details" asp-route-id="@Model.Partner.Id"
+               class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+  <script>
+    document.getElementById('articleFilter').addEventListener('input', function() {
+      const val = this.value.toLowerCase();
+      const sel = document.getElementById('productSelect');
+      Array.from(sel.options).forEach(opt => {
+        if (!opt.value) return;
+        opt.style.display = opt.dataset.article.toLowerCase().includes(val) ? '' : 'none';
+      });
+    });
+  </script>
+}

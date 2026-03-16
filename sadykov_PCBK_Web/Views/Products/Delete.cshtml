@@ -1,0 +1,37 @@
+@model sadykov_PCBK_Web.Models.Product
+@{ ViewData["Title"] = "Удалить продукцию"; }
+
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="bg-white border border-danger rounded overflow-hidden">
+      <div class="panel-header bg-danger text-white">
+        <i class="bi bi-exclamation-triangle me-2"></i>Подтверждение удаления
+      </div>
+      <div class="p-4">
+        <p>Вы уверены, что хотите удалить продукцию?</p>
+        <table class="table table-borderless table-sm mb-3">
+          <tr><td class="text-muted" style="width:130px">Артикул</td>
+              <td><code>@Model.Article</code></td></tr>
+          <tr><td class="text-muted">Наименование</td>
+              <td><strong>@Model.ProductName</strong></td></tr>
+          <tr><td class="text-muted">Тип</td><td>@Model.ProductType</td></tr>
+          <tr><td class="text-muted">Мин. цена</td>
+              <td>@Model.MinPrice.ToString("N2") руб.</td></tr>
+        </table>
+        <div class="alert alert-warning py-2">
+          <i class="bi bi-info-circle me-2"></i>
+          Если продукция используется в истории реализации — удаление будет запрещено.
+        </div>
+        <form asp-action="Delete" method="post">
+          <input type="hidden" name="id" value="@Model.Id" />
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-trash me-1"></i>Удалить
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
